@@ -31,14 +31,15 @@ class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Anal
                 listener?.onQRCodeFound(result.text)
             }catch (e: Exception ){
                 when(e){
-                   is FormatException,is ChecksumException, is NotFoundException -> {
-                       listener?.qrCodeNotFound()
-                   }
+                    is FormatException,is ChecksumException, is NotFoundException -> {
+                        listener?.qrCodeNotFound()
+                    }
                 }
             }
 
             image.close()
         }
     }
+
 
 }

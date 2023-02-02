@@ -1,6 +1,7 @@
 package com.github.msledgroup.culturalcenterlibrary
 
 import android.content.pm.PackageManager
+
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -117,4 +118,3 @@ class QRLoginActivity : AppCompatActivity() {
         camera.cameraControl
     }
 }
-

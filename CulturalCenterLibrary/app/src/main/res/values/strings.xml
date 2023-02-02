@@ -6,4 +6,6 @@
     <string name="welcome">Welcome</string>
     <string name="please_enter_your_name">Please Enter Your Name</string>
     <string name="e_g_john_doe">e.g. John Doe</string>
+    <string name="cultural_center_library">Cultural Center Library</string>
+    <string name="qr_code_found">QR Code Found</string>
 </resources>

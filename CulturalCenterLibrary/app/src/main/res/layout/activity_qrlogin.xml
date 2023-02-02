@@ -16,7 +16,9 @@
         android:id="@+id/qrCode_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="QR Code Found"
+        android:text="@string/qr_code_found"
+        android:background="@color/lib_orange"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/preView_Cam"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
