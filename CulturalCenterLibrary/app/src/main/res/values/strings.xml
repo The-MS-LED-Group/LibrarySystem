@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CulturalCenterLibrary</string>
+    <string name="cancel">cancel</string>
+    <string name="date">Date</string>
+    <string name="login">Login</string>
+    <string name="welcome">Welcome</string>
+    <string name="please_enter_your_name">Please Enter Your Name</string>
+    <string name="e_g_john_doe">e.g. John Doe</string>
+</resources>
