@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.camera2.*
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -42,7 +43,7 @@ class QRLoginActivity : AppCompatActivity() {
             @Override
             fun onClick(v: View){
                 Toast.makeText(applicationContext, qrCodeAct, Toast.LENGTH_SHORT).show()
-                Log.i(QRLoginActivity.javaClass.simpleName, "QR Code Found: " + qrCodeAct )
+                Log.i(QRLoginActivity::class.java.simpleName, "QR Code Found: " + qrCodeAct )
             }
         })
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -116,5 +117,6 @@ class QRLoginActivity : AppCompatActivity() {
             preview
         )
         camera.cameraControl
+//        if(camera.)
     }
 }

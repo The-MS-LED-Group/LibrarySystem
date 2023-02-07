@@ -8,4 +8,8 @@
     <string name="e_g_john_doe">e.g. John Doe</string>
     <string name="cultural_center_library">Cultural Center Library</string>
     <string name="qr_code_found">QR Code Found</string>
+    <string name="barcode_text">Barcode Text</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="barcode_view">Barcode scanning view</string>
 </resources>

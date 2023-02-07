@@ -40,6 +40,10 @@ class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Anal
             image.close()
         }
     }
-
+}
+class BarCodeScanner: ImageAnalysis.Analyzer {
+    override fun analyze(image: ImageProxy) {
+        TODO("Not yet implemented")
+    }
 
 }
