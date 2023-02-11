@@ -13,20 +13,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
+import com.google.zxing.Result
 import com.google.zxing.client.android.BeepManager
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
-import java.security.Permission
-import java.security.Permissions
-import java.util.*
+
 
 
 class BarcodeScannerActivity : AppCompatActivity() {
     var barcodeView: DecoratedBarcodeView? = null
     var beepManager: BeepManager? = null
     var lastText: String? = null
+    private var result: Result? = null
+
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
@@ -56,7 +57,10 @@ class BarcodeScannerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_barcode_scanner)
         this.barcodeView = findViewById(R.id.barcode_scanner)
         val formats: Collection<BarcodeFormat> =
-            Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39)
+            listOf(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39,
+                BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.CODE_128,
+                BarcodeFormat.UPC_EAN_EXTENSION
+            )
         this.barcodeView!!.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
         this.barcodeView!!.initializeFromIntent(intent)
         this.barcodeView!!.decodeContinuous(callback)
@@ -78,6 +82,7 @@ class BarcodeScannerActivity : AppCompatActivity() {
     }
 
     fun resume(view: View?) {
+        Toast.makeText(this, "$result.", Toast.LENGTH_SHORT).show()
         barcodeView!!.resume()
     }
 

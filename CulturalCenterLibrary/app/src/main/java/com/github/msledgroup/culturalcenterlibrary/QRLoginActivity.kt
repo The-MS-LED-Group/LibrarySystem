@@ -5,11 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
+import android.view.Surface
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.camera2.*
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException
 
 class QRLoginActivity : AppCompatActivity() {
     companion object {
-        private val PERMISSION_REQUEST_CAMERA = 0
+        private const val PERMISSION_REQUEST_CAMERA = 0
     }
 
     private var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>? = null
@@ -39,20 +39,28 @@ class QRLoginActivity : AppCompatActivity() {
 
         qrCodeBtn = findViewById(R.id.qrCode_btn)
         qrCodeBtn?.visibility = View.INVISIBLE
-        qrCodeBtn?.setOnClickListener(View.OnClickListener(){
+        qrCodeBtn?.setOnClickListener {
             @Override
-            fun onClick(v: View){
+            fun onClick() {
                 Toast.makeText(applicationContext, qrCodeAct, Toast.LENGTH_SHORT).show()
-                Log.i(QRLoginActivity::class.java.simpleName, "QR Code Found: " + qrCodeAct )
+                Log.i(QRLoginActivity::class.java.simpleName, "QR Code Found: $qrCodeAct")
             }
-        })
+        }
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         requestCamera()
     }
 
     private fun requestCamera(){
-        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             startCamera()
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(android.Manifest.permission.CAMERA.toString()),
+                    PERMISSION_REQUEST_CAMERA)
+            } else {
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
+            }
         }
     }
     override fun onRequestPermissionsResult(
@@ -62,6 +70,7 @@ class QRLoginActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CAMERA) {
+            Toast.makeText(this, "results ${grantResults[0]}", Toast.LENGTH_LONG).show()
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera()
             } else {
@@ -86,7 +95,7 @@ class QRLoginActivity : AppCompatActivity() {
 
     private fun bindCameraPreview(cameraProvider: ProcessCameraProvider) {
         previewView?.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-        val preview: Preview = Preview.Builder()
+        val preview: Preview = Preview.Builder().setTargetRotation(Surface.ROTATION_90)
             .build()
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
@@ -117,6 +126,6 @@ class QRLoginActivity : AppCompatActivity() {
             preview
         )
         camera.cameraControl
-//        if(camera.)
+
     }
 }
