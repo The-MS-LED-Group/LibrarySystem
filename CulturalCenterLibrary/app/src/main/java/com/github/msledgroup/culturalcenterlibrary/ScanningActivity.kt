@@ -1,7 +1,7 @@
 package com.github.msledgroup.culturalcenterlibrary
 
 import android.content.pm.PackageManager
-import android.graphics.PixelFormat
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -9,7 +9,6 @@ import android.view.Surface
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -20,35 +19,35 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
+import io.github.g0dkar.qrcode.QRCode
 import java.util.concurrent.ExecutionException
 
+class ScanningActivity : AppCompatActivity() {
 
-class QRLoginActivity : AppCompatActivity() {
     companion object {
         private const val PERMISSION_REQUEST_CAMERA = 0
     }
 
     private var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>? = null
     private var previewView: PreviewView? = null
-    private lateinit var qrCodeAct: String
-    private var qrCodeBtn: Button? = null
+    private lateinit var scanAct: String
+    private var scanBtn: Button? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_qrlogin)
-
-        previewView = findViewById(R.id.preView_Cam)
-
-        qrCodeBtn = findViewById(R.id.qrCode_btn)
-        qrCodeBtn?.visibility = View.INVISIBLE
-        qrCodeBtn?.setOnClickListener {
-            @Override
-            fun onClick() {
-                Toast.makeText(applicationContext, qrCodeAct, Toast.LENGTH_SHORT).show()
-                Log.i(QRLoginActivity::class.java.simpleName, "QR Code Found: $qrCodeAct")
-            }
-        }
+        setContentView(R.layout.activity_scanning)
+        previewView = findViewById(R.id.scanningView)
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        scanBtn = findViewById(R.id.scanbtn)
+        scanBtn?.setOnClickListener {
+            @Override
+            fun onClick(){
+
+            }
+
+        }
         requestCamera()
+
     }
 
     private fun requestCamera(){
@@ -57,10 +56,13 @@ class QRLoginActivity : AppCompatActivity() {
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(android.Manifest.permission.CAMERA.toString()),
-                    PERMISSION_REQUEST_CAMERA)
+                    arrayOf(android.Manifest.permission.CAMERA),
+                    PERMISSION_REQUEST_CAMERA
+                )
             } else {
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA),
+                    PERMISSION_REQUEST_CAMERA
+                )
             }
         }
     }
@@ -101,33 +103,61 @@ class QRLoginActivity : AppCompatActivity() {
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
-
+        val type = intent.getStringExtra("type")
         preview.setSurfaceProvider(previewView?.surfaceProvider)
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(Size(1280, 720))
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-        imageAnalysis.setAnalyzer(
-            ContextCompat.getMainExecutor(this),
-            QRScanner(object: QRCodeFoundListener {
-                override fun onQRCodeFound(qrCode: String?) {
-                    qrCodeAct = qrCode!!
-                    qrCodeBtn?.visibility = View.VISIBLE
-                }
 
-                override fun qrCodeNotFound(qrCode: String?) {
-                    qrCodeBtn?.visibility = View.INVISIBLE
-                }
-            })
-        )
-        val camera: Camera = cameraProvider.bindToLifecycle(
-            (this as LifecycleOwner),
-            cameraSelector,
-            imageAnalysis,
-            preview
-        )
+        var imageAnalysis: ImageAnalysis? = null
 
-        camera.cameraControl
+        if(type.equals("QRcode")) {
+            imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1280, 720))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+            imageAnalysis.setAnalyzer(
+                ContextCompat.getMainExecutor(this),
+                QRScanner(object : QRCodeFoundListener {
+                    override fun onQRCodeFound(qrCode: String?) {
+                        scanAct = qrCode!!
+                        scanBtn?.visibility = View.VISIBLE
+                    }
 
+                    override fun qrCodeNotFound(qrCode: String?) {
+                        Toast.makeText(this@ScanningActivity, "Not found: $qrCode", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            )
+        }
+        else if(type.equals("Barcode")){
+            imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1280, 720))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+            imageAnalysis.setAnalyzer(
+                ContextCompat.getMainExecutor(this),
+                BarCodeScanner(object : BarcodeListener {
+                    override fun onBarcodeFound(barCode: String?) {
+                        scanAct = barCode!!
+                        scanBtn?.visibility = View.VISIBLE
+                    }
+                    override fun barcodeNotFound(barCode: String?) {
+                        Toast.makeText(this@ScanningActivity, "Not Found: $barCode", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            )
+        }
+        else{
+            Toast.makeText(this, "Image Analysis null", Toast.LENGTH_SHORT).show()
+        }
+        if(imageAnalysis != null){
+            val camera: Camera = cameraProvider.bindToLifecycle(
+                (this as LifecycleOwner),
+                cameraSelector,
+                imageAnalysis,
+                preview
+            )
+            camera.cameraControl
+        }
+        else
+            Toast.makeText(this, "No Image Analysis", Toast.LENGTH_SHORT).show()
     }
 }

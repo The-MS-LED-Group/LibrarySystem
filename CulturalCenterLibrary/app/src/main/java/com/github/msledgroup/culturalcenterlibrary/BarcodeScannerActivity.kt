@@ -1,9 +1,8 @@
 package com.github.msledgroup.culturalcenterlibrary
 
 import android.content.pm.PackageManager
-import android.graphics.Camera
 import android.graphics.Color
-import android.hardware.camera2.CameraDevice
+import android.hardware.Camera
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -19,7 +18,11 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
-
+import com.journeyapps.barcodescanner.camera.CameraSettings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import org.json.JSONObject
 
 
 class BarcodeScannerActivity : AppCompatActivity() {
@@ -27,6 +30,8 @@ class BarcodeScannerActivity : AppCompatActivity() {
     var beepManager: BeepManager? = null
     var lastText: String? = null
     private var result: Result? = null
+    var barcodeAPIs: BarcodeApiLookup = BarcodeApiLookup()
+    var codeQue: MutableList<JSONObject?> = MutableList(1){null}
 
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
@@ -38,6 +43,10 @@ class BarcodeScannerActivity : AppCompatActivity() {
             lastText = result.text
             barcodeView!!.setStatusText(result.text)
             beepManager!!.playBeepSoundAndVibrate()
+
+            val book: JSONObject? = barcodeAPIs.ISBNapiCall(result.text)
+
+            Toast.makeText(this@BarcodeScannerActivity, "book: ${book?.keys().toString()}", Toast.LENGTH_SHORT).show()
 
             //Added preview of scanned barcode
             val imageView: ImageView = findViewById(R.id.barcodePreview)

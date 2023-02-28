@@ -7,10 +7,12 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.app.ActivityCompat
 import com.google.zxing.*
+import com.google.zxing.client.result.ISBNResultParser
 import com.google.zxing.common.BitArray
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.multi.qrcode.QRCodeMultiReader
 import com.google.zxing.oned.EAN13Reader
+import com.google.zxing.oned.EAN8Reader
 import java.nio.ByteBuffer
 
 class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Analyzer{
@@ -33,6 +35,7 @@ class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Anal
 
             try{
                 val result = QRCodeMultiReader().decode(binaryBitmap)
+
             }catch (e: Exception ){
                 when(e){
                     is FormatException,is ChecksumException, is NotFoundException -> {
@@ -45,7 +48,7 @@ class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Anal
         }
     }
 }
-class BarCodeScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Analyzer{
+class BarCodeScanner(private var listener: BarcodeListener?) : ImageAnalysis.Analyzer{
     override fun analyze(image: ImageProxy) {
         val byteBuffer: ByteBuffer = image.planes[0].buffer
         val imageData = ByteArray(byteBuffer.capacity())
@@ -61,14 +64,16 @@ class BarCodeScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis
         val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
 
         try{
+            
             val eanRead = EAN13Reader()
+            val ean10Read = EAN8Reader()
             val result = eanRead.decode(binaryBitmap)
             Log.i("Result:","${result.barcodeFormat}")
-            listener?.onQRCodeFound(result.text)
+            listener?.onBarcodeFound(result.text)
         }catch (e: Exception ){
             when(e){
                 is FormatException,is ChecksumException, is NotFoundException -> {
-                    listener?.qrCodeNotFound()
+                    listener?.barcodeNotFound()
                 }
             }
         }
