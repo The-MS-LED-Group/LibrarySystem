@@ -39,7 +39,7 @@ class QRScanner(private var listener: QRCodeFoundListener?) : ImageAnalysis.Anal
             }catch (e: Exception ){
                 when(e){
                     is FormatException,is ChecksumException, is NotFoundException -> {
-                        listener?.qrCodeNotFound()
+                        listener?.qrCodeNotFound(null)
                     }
                 }
             }
@@ -73,7 +73,7 @@ class BarCodeScanner(private var listener: BarcodeListener?) : ImageAnalysis.Ana
         }catch (e: Exception ){
             when(e){
                 is FormatException,is ChecksumException, is NotFoundException -> {
-                    listener?.barcodeNotFound()
+                    listener?.barcodeNotFound(null)
                 }
             }
         }
