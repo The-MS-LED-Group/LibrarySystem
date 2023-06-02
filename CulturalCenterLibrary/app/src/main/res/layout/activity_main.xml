@@ -57,28 +57,30 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/txtEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/lib_greyblue"
                         android:hint="@string/e_g_john_doe"
-                        android:text=""
                         android:inputType="textCapWords"
+                        android:text=""
                         android:textColor="#363A43"
-                        android:textColorHint="#7A8089"
-                        />
+                        android:textColorHint="#455A64" />
+
                     <ImageButton
+                        android:id="@+id/qrImageBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/txtEdit"
+                        android:layout_alignEnd="@+id/txtEdit"
+                        android:layout_alignBottom="@+id/txtEdit"
                         android:background="@color/lib_greyblue"
-                        android:id="@+id/qrImageBtn"
                         android:paddingStart="50dp"
                         android:paddingEnd="10dp"
-                        android:layout_alignTop="@+id/txtEdit"
-                        android:layout_alignBottom="@+id/txtEdit"
-                        android:layout_alignEnd="@+id/txtEdit"
-                        android:src="@drawable/ic_qr_code_24_mdpi" />
+                        android:src="@drawable/ic_qr_code_24_mdpi"
+                        tools:ignore="SpeakableTextPresentCheck" />
                 </RelativeLayout>
 
 

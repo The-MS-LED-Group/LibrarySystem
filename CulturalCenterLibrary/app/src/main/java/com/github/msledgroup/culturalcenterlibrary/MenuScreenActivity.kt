@@ -12,6 +12,7 @@ class MenuScreenActivity : AppCompatActivity() {
 
         val checkoutBtn: Button = findViewById(R.id.checkoutBtn)
         val scannerBtn: Button = findViewById(R.id.scannerBtn)
+        val searchBtn: Button = findViewById(R.id.searchBtn)
 
         checkoutBtn.setOnClickListener{
             val intent = Intent(this, BarcodeScannerActivity::class.java)
@@ -21,6 +22,11 @@ class MenuScreenActivity : AppCompatActivity() {
         scannerBtn.setOnClickListener{
             val intent = Intent(this, ScanningActivity::class.java)
             intent.putExtra("type", "Barcode")
+            startActivity(intent)
+        }
+
+        searchBtn.setOnClickListener{
+            val intent = Intent(this, listActivity::class.java)
             startActivity(intent)
         }
     }
